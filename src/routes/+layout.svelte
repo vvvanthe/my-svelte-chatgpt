@@ -7,7 +7,7 @@
 <div class="flex flex-col min-h-screen">
   <Header />
 
-  <main class="flex-grow flex flex-col p-4 w-full max-w-4xl mx-auto">
+  <main class="flex-grow flex flex-col p-4 w-full max-w-4xl mx-auto font-sans">
     <slot />
   </main>
 

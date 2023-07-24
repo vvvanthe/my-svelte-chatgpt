@@ -1,9 +1,13 @@
-<div class="absolute bottom-0 right-0 items-center inset-y-0 flex m">
+<script>
+  export let inputText 
+</script>
+
+<div class="absolute bottom-2 right-4 items-center inset-y-0 flex m ">
   <button
     type="submit"
-    class="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400"
+    class="inline-flex items-center justify-center rounded-lg px-4 py-4 transition duration-500 ease-in-out text-white bg-[#11A37F] hover:opacity-50 w-14 h-10 disabled:bg-gray-300 disabled:cursor-not-allowed" disabled={inputText.length===0}
   >
-    <span class="font-bold">Send</span>
+
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 20 20"

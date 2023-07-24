@@ -14,7 +14,7 @@
   }
 </script>
 
-<div class={`flex items-end ${message.role === 'user' ? 'justify-end' : ''}`}>
+<div class={`flex items-end ${message.role === 'user' ? 'justify-end' : ''} `}>
   <div
     class={`flex flex-col space-y-2 text-xs max-w-xs mx-2 ${
       message.role === 'user' ? 'order-1 items-end' : 'order-2 items-start'

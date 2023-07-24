@@ -23,10 +23,13 @@
       scrollToBottom();
     }
   }
+
+
+  
 </script>
 
 <svelte:head>
-  <title>SvelteGPT</title>
+  <title>Aivision</title>
 </svelte:head>
 
 <div
@@ -43,11 +46,11 @@
     {/each}
   </div>
 
-  <div class="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
+  <div class="  px-4 pt-4 mb-2 sm:mb-0">
     <div class="relative flex">
       <form class="w-full relative" on:submit={handleSubmit}>
         <TextArea {input} />
-        <SubmitButton />
+        <SubmitButton inputText={input}/>
       </form>
     </div>
   </div>

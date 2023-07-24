@@ -10,6 +10,7 @@
       e.stopPropagation();
     } else if (e.key === 'Enter') {
       e.preventDefault();
+  
 
       if (e.target instanceof HTMLTextAreaElement) {
         e?.target?.form?.requestSubmit();
