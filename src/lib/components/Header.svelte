@@ -6,8 +6,8 @@
 
 <header>
   <div class="corner">
-    <a href="https://kit.svelte.dev">
-      <img src={logo} alt="SvelteKit" />
+    <a href="https://aivision.vn/">
+      <img src={logo} alt="AIVision" />
     </a>
   </div>
 
@@ -17,11 +17,11 @@
     </svg>
     <ul>
      
-      <li aria-current={$page.url.pathname === '/about' ? 'page' : undefined}>
-        <a href="/about">Home</a>
+      <li aria-current={$page.url.pathname === '/home' ? 'page' : undefined}>
+        <a href="/home">Home</a>
       </li>
-      <li aria-current={$page.url.pathname === '/' ? 'page' : undefined}>
-        <a href="/">Upload</a>
+      <li aria-current={$page.url.pathname === '/upload' ? 'page' : undefined}>
+        <a href="/upload">Upload</a>
       </li>
       <li aria-current={$page.url.pathname === '/' ? 'page' : undefined}>
         <a href="/">Chat</a>
