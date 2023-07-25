@@ -6,13 +6,38 @@
 <script>
   import { Button, Modal ,GradientButton } from 'flowbite-svelte'
   import { Fileupload, Label, Listgroup, ListgroupItem,Helper, Toast } from 'flowbite-svelte'
-  let files;  // FileList type
+  
+  let files=[];  // FileList type
   let defaultModal = false;
   import { Input } from 'flowbite-svelte';
+  import axios from 'axios';
 
   // onMount(async () => {
   //   getModal().open();
   // });
+
+  async function handleFileUpload() {
+    const formData = new FormData();
+
+    for (const file of files) {
+      formData.append("files", file);
+    }
+    formData.append("name", 'Nam Long');
+    formData.append("link", 'hehe');
+
+    try {
+      const response = await axios.post("http://localhost:8000/uploadfiles/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        maxRedirects: 0, // Disable redirects
+      });
+
+      console.log("Server Response:", response.data);
+      // Handle the response data as needed
+    } catch (error) {
+      console.error("Error uploading files:", error);
+      // Handle the error
+    }
+  }
 </script>
 
 <div class="text-6xl font-bold text-center pt-10">
@@ -33,28 +58,29 @@
 </Modal>
 
 
+<input type="file" bind:files={files} multiple />
+<button on:click={handleFileUpload}>Upload Files</button>
 
-
-<form class="pt-10">
+<form class="pt-10" on:submit={handleFileUpload}>
   <div class="grid gap-6 mb-6 md:grid-cols-2">
     <div>
       <Label class="pb-2" for='multiple_files' >Upload multiple files</Label>
-      <Fileupload id='multiple_files' multiple bind:files />
+      <Fileupload id='multiple_files' multiple bind:files={files} />
       <div class="pt-1">
   
       </div>
  </div>
     <div>
-      <Label for="first_name" class="mb-2">Location</Label>
-      <Input type="text" id="first_name" placeholder="Bach Khoa Univeristy" required  />
+      <Label for="location" class="mb-2">Location</Label>
+      <Input type="text" id="location" placeholder="Bach Khoa Univeristy" required  />
     </div>
     <div>
-      <Label for="first_name" class="mb-2">Adress</Label>
-      <Input type="text" id="first_name" placeholder="268 Lý Thường Kiệt St, District 10, Ho Chi Minh City" required  />
+      <Label for="address" class="mb-2">Adress</Label>
+      <Input type="text" id="address" placeholder="268 Lý Thường Kiệt St, District 10, Ho Chi Minh City" required  />
     </div>
     <div>
-      <Label for="first_name" class="mb-2">Image link</Label>
-      <Input type="text" id="first_name" placeholder="https://huongnghiep.hocmai.vn/2022/02/image1-92.png" required  />
+      <Label for="image_link" class="mb-2">Image link</Label>
+      <Input type="text" id="image_link" placeholder="https://huongnghiep.hocmai.vn/2022/02/image1-92.png" required  />
     </div>
     
 

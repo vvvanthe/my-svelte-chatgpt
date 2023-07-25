@@ -1,6 +1,6 @@
 <script>
 
-
+  import { location } from '$lib/components/stores';
   import { Card, Button } from "flowbite-svelte";
 </script>
 
@@ -9,7 +9,7 @@
 </div>
 <div>
   <Card img="https://huongnghiep.hocmai.vn/wp-content/uploads/2022/02/image1-92.png" >
-    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Bach Khoa University</h5>
+    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{$location}</h5>
     <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
       268 Lý Thường Kiệt St, District 10, Ho Chi Minh City
     </p>

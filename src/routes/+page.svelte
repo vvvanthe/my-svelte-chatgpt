@@ -4,6 +4,7 @@
   import Profile from '$lib/components/Profile.svelte';
   import SubmitButton from '$lib/components/SubmitButton.svelte';
   import Message from '$lib/components/Message.svelte';
+  import { location } from '$lib/components/stores';
 
   let messageContainer: HTMLElement | null = null;
 
@@ -23,6 +24,7 @@
       scrollToBottom();
     }
   }
+  
 
 
   
