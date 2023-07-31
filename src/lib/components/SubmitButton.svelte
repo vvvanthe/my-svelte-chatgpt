@@ -1,11 +1,11 @@
 <script>
-  export let inputText 
+  export let disabled
 </script>
 
 <div class="absolute bottom-2 right-4 items-center inset-y-0 flex m ">
   <button
     type="submit"
-    class="inline-flex items-center justify-center rounded-lg px-4 py-4 transition duration-500 ease-in-out text-white bg-[#11A37F] hover:opacity-50 w-14 h-10 disabled:bg-gray-300 disabled:cursor-not-allowed" disabled={inputText.length===0}
+    class="inline-flex items-center justify-center rounded-lg px-4 py-4 transition duration-500 ease-in-out text-white bg-[#11A37F] hover:opacity-50 w-14 h-10 disabled:bg-gray-300 disabled:cursor-not-allowed" disabled={disabled}
   >
 
     <svg

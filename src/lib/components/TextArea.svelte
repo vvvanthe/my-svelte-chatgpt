@@ -17,7 +17,7 @@
       }
     }
   }}
-  bind:value={$input}
+  bind:value={input}
   name="message"
   autocomplete="off"
   placeholder="Write your message!"

@@ -9,20 +9,7 @@ Features include:
 
 ## Getting Started
 
-### Installation
 
-```bash
-npx create-svelte-chatgpt@latest
-```
-
-### Add Environment Variable(s)
-
-Create a `.env` file in the root directory and add your OpenAI API key.
-
-**You can get your API key [here](https://platform.openai.com/account/api-keys) from the OpenAI dashboard.**
-
-```bash
-OPENAI_API_KEY=xxx
 ```
 
 ## Demo

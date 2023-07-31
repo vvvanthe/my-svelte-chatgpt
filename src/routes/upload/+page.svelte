@@ -5,36 +5,50 @@
 
 <script>
   import { Button, Modal ,GradientButton } from 'flowbite-svelte'
-  import { Fileupload, Label, Listgroup, ListgroupItem,Helper, Toast } from 'flowbite-svelte'
+  import { Fileupload, Label, Listgroup, ListgroupItem,MenuButton, Toast,Spinner } from 'flowbite-svelte'
   
   let files=[];  // FileList type
   let defaultModal = false;
   import { Input } from 'flowbite-svelte';
   import axios from 'axios';
+  let address
+  let image_link
+  let loc_name
+  let flagLoading = false
+  let messE=''
+  
 
   // onMount(async () => {
   //   getModal().open();
   // });
 
   async function handleFileUpload() {
+    flagLoading = true
+    defaultModal = true
     const formData = new FormData();
+
 
     for (const file of files) {
       formData.append("files", file);
     }
-    formData.append("name", 'Nam Long');
-    formData.append("link", 'hehe');
+    formData.append("loc_name", loc_name);
+    formData.append("image_link", image_link);
+    formData.append("address", address);
 
     try {
-      const response = await axios.post("http://localhost:8000/uploadfiles/", formData, {
+      const response = await axios.post("https://chatbotbe.ap.ngrok.io/location/uploadfiles/", formData, {
         headers: { "Content-Type": "multipart/form-data" },
         maxRedirects: 0, // Disable redirects
       });
 
       console.log("Server Response:", response.data);
+      flagLoading = false
+      messE=''
       // Handle the response data as needed
     } catch (error) {
       console.error("Error uploading files:", error);
+      flagLoading = false
+      messE = 'Cannot Upload'
       // Handle the error
     }
   }
@@ -44,43 +58,64 @@
   New Location
 </div>
 <!-- <Button on:click={() => defaultModal = true}>Default modal</Button> -->
-<Modal title="Terms of Service" bind:open={defaultModal} autoclose>
-  <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-    With less than a month to go before the European Union enacts new consumer privacy laws for its citizens, companies around the world are updating their terms of service agreements to comply.
-  </p>
-  <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-    The European Union’s General Data Protection Regulation (G.D.P.R.) goes into effect on May 25 and is meant to ensure a common set of data rights in the European Union. It requires organizations to notify users as soon as possible of high-risk data breaches that could personally affect them.
-  </p>
+<Modal title="Status Form" bind:open={defaultModal} autoclose>
+
+  {#if flagLoading}
+  <div class="flex items-center text-center justify-center w-full">
+    
+    <br>
+    <p class="text-lg text-purple-700 font-bold">Uploading... &nbsp</p>
+    <Spinner color="purple" />
+  </div>
+    {:else}
+
+    {#if messE.length==0}
+
+    <div class="flex items-center text-center justify-center w-full">
+      <br>
+      <p class="text-lg text-purple-700 font-bold">Done!</p>
+
+    </div>
+
+    {:else}
+
+    <div class="flex items-center text-center justify-center w-full">
+      <br>
+      <p class="text-lg text-red-700 font-bold">{messE}</p>
+
+    </div>
+
+    {/if}
+
+
+    {/if}
+
   <svelte:fragment slot='footer'>
-    <Button on:click={() => alert('Handle "success"')}>I accept</Button>
-    <Button color="alternative">Decline</Button>
+    <Button color="alternative" disabled = {flagLoading}>Decline</Button>
   </svelte:fragment>
 </Modal>
 
-
-<input type="file" bind:files={files} multiple />
-<button on:click={handleFileUpload}>Upload Files</button>
 
 <form class="pt-10" on:submit={handleFileUpload}>
   <div class="grid gap-6 mb-6 md:grid-cols-2">
     <div>
       <Label class="pb-2" for='multiple_files' >Upload multiple files</Label>
-      <Fileupload id='multiple_files' multiple bind:files={files} />
+      <Fileupload id='multiple_files' multiple bind:files={files} required/>
       <div class="pt-1">
   
       </div>
  </div>
     <div>
       <Label for="location" class="mb-2">Location</Label>
-      <Input type="text" id="location" placeholder="Bach Khoa Univeristy" required  />
+      <Input type="text" id="location" placeholder="Bach Khoa Univeristy" required  bind:value={loc_name}/>
     </div>
     <div>
       <Label for="address" class="mb-2">Adress</Label>
-      <Input type="text" id="address" placeholder="268 Lý Thường Kiệt St, District 10, Ho Chi Minh City" required  />
+      <Input type="text" id="address" placeholder="268 Lý Thường Kiệt St, District 10, Ho Chi Minh City" required  bind:value={address}/>
     </div>
     <div>
       <Label for="image_link" class="mb-2">Image link</Label>
-      <Input type="text" id="image_link" placeholder="https://huongnghiep.hocmai.vn/2022/02/image1-92.png" required  />
+      <Input type="text" id="image_link" placeholder="https://huongnghiep.hocmai.vn/2022/02/image1-92.png" required  bind:value={image_link}/>
     </div>
     
 
