@@ -18,7 +18,13 @@
 
   let inputText = ''
 
-
+ 
+  $: {
+    if (messageList) {
+      scrollToBottom();
+      
+    }
+  }
 
  
   function scrollToBottom() {
@@ -67,14 +73,13 @@
 
 
 
- 
-  $: {
-    if (messageList) {
+
+  afterUpdate(() => {
+		if (messageList) {
       scrollToBottom();
       
     }
-  }
-
+  });
   
   onMount(async () => {
     if ($location==='')
@@ -133,8 +138,8 @@
 
 
 <div
-  class="flex-1 p-6 justify-between flex flex-col h-screen border-2 border-white bg-slate-300 rounded-2xl"
->
+  class="flex-1 p-6 justify-between flex flex-col  border-2 border-white bg-slate-300 rounded-2xl h-full"
+  >
   <Profile />
 
   <div
