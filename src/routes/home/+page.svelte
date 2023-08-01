@@ -4,7 +4,7 @@
   import { Card, Button ,MenuButton,CloseButton ,Modal, Spinner} from "flowbite-svelte";
   import axios from "axios";
   import { onMount, afterUpdate  } from "svelte";
-  import { link } from 'svelte-routing';
+
   let locationList=[]
   let flagLoading = false;
   let defaultModal = false;
