@@ -6,16 +6,13 @@
   import { location } from '$lib/components/stores';
   import { onMount, afterUpdate  } from "svelte";
   import { Button, Modal, P } from 'flowbite-svelte'
-  import axios from "axios";
-  
-
   let messageContainer: HTMLElement | null = null;
 
   let open = false;
   let color;
   let locationList = []
   let messageList = []
-
+  let streamData = '';
   let inputText = ''
 
  
@@ -36,7 +33,21 @@
     }
   }
 
+  async function readAllChunks(readableStream) {
+  const reader = readableStream.getReader();
+  const chunks = [];
+  
+  let done, value;
+  while (!done) {
+    ({ value, done } = await reader.read());
+    if (done) {
+      return chunks;
+    }
+    chunks.push(value);
+  }
+}
   async function handleSubmit(sendmessage) {
+
     inputText = ''
     messageList=[...messageList, { content:sendmessage, role:'user' }];
 
@@ -45,18 +56,62 @@
       loc_name : $location
 
     };
-    messageList=[...messageList, { content:'Thinking', role:'noti' }];
 
+    messageList=[...messageList, { content:'Thinking', role:'noti' }];
+    
     try {
-      const response = await axios.post("https://chatbotbe.ap.ngrok.io/location/chat", new URLSearchParams(formData).toString(), {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        maxRedirects: 0, // Disable redirects
+      // const response = await axios.post("https://chatbotbe.ap.ngrok.io/location/chat", new URLSearchParams(formData).toString(), {
+      //   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      //   responseType: 'stream' 
+      // })
+      // Convert the response into a friendly text-stream\
+
+   
+      const response2 = await fetch("https://chatbotbe.ap.ngrok.io/location/chat", {
+        method: "POST",
+        body: new URLSearchParams(formData).toString(),
+        headers: {
+          "Content-Type": 'application/x-www-form-urlencoded',
+        },
+        credentials: "same-origin",
       });
+      const reader = response2.body.getReader();
       messageList = messageList.filter((user) => user.role !== 'noti');
+      messageList=[...messageList, { content:'', role:'assistant' }];
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          break;
+        }
+        // console.log(new TextDecoder().decode(value))
+        messageList[messageList.length - 1].content += new TextDecoder().decode(value);
+      }
+   
+
+      // console.log(stream)
+
+      // axios.post("https://chatbotbe.ap.ngrok.io/location/chat", new URLSearchParams(formData).toString(), {
+      //   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      //   responseType: 'stream' 
+      // }).then((response)=>{
+      //   console.log(response.data)
+      //   messageList = messageList.filter((user) => user.role !== 'noti');
+     
+      // // console.log("Server Response:", response.data.response.response);
+      //   messageList=[...messageList, { content:response.data, role:'assistant' }];
+  
+      // })
+
+      
      
       // console.log("Server Response:", response.data.response.response);
-      messageList=[...messageList, { content:response.data.response.response, role:'assistant' }];
+       
   
+
+     
+
+      
      
 
       // Handle the response data as needed
@@ -70,6 +125,7 @@
     
     
   }
+
 
 
 
@@ -113,6 +169,7 @@
 <svelte:head>
   <title>Aivision</title>
 </svelte:head>
+
 
 <Modal title="Warning" bind:open {color} >
 

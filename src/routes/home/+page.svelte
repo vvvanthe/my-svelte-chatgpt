@@ -133,7 +133,7 @@
             </CloseButton>
           
         </div>
-        <img class="rounded-t-lg object-fill" src={loc_name[1]} alt="" />
+        <!-- <img class="rounded-t-lg object-fill" src={loc_name[1]} alt="" /> -->
 
       </div>
           
