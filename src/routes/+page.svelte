@@ -12,7 +12,7 @@
   let color;
   let locationList = []
   let messageList = []
-  let streamData = '';
+
   let inputText = ''
 
  
@@ -60,12 +60,6 @@
     messageList=[...messageList, { content:'Thinking', role:'noti' }];
     
     try {
-      // const response = await axios.post("https://chatbotbe.ap.ngrok.io/location/chat", new URLSearchParams(formData).toString(), {
-      //   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      //   responseType: 'stream' 
-      // })
-      // Convert the response into a friendly text-stream\
-
    
       const response2 = await fetch("https://chatbotbe.ap.ngrok.io/location/chat", {
         method: "POST",
@@ -88,33 +82,6 @@
         messageList[messageList.length - 1].content += new TextDecoder().decode(value);
       }
    
-
-      // console.log(stream)
-
-      // axios.post("https://chatbotbe.ap.ngrok.io/location/chat", new URLSearchParams(formData).toString(), {
-      //   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      //   responseType: 'stream' 
-      // }).then((response)=>{
-      //   console.log(response.data)
-      //   messageList = messageList.filter((user) => user.role !== 'noti');
-     
-      // // console.log("Server Response:", response.data.response.response);
-      //   messageList=[...messageList, { content:response.data, role:'assistant' }];
-  
-      // })
-
-      
-     
-      // console.log("Server Response:", response.data.response.response);
-       
-  
-
-     
-
-      
-     
-
-      // Handle the response data as needed
     } catch (error) {
       
       console.error("Error uploading files:", error);

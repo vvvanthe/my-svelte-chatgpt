@@ -2,7 +2,8 @@
   export let input;
 </script>
 
-<textarea
+<textarea 
+
   on:keydown={(e) => {
     const shiftEnter = e.shiftKey && e.key === 'Enter';
 
@@ -10,10 +11,13 @@
       e.stopPropagation();
     } else if (e.key === 'Enter') {
       e.preventDefault();
+
+      
   
 
       if (e.target instanceof HTMLTextAreaElement) {
         e?.target?.form?.requestSubmit();
+
       }
     }
   }}
