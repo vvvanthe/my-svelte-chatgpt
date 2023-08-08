@@ -105,9 +105,9 @@
 
     {/if}
 
-  <svelte:fragment slot='footer'>
+  <!-- <svelte:fragment slot='footer'>
     <Button color="alternative" disabled = {flagLoading}>Decline</Button>
-  </svelte:fragment>
+  </svelte:fragment> -->
 </Modal>
 
 
