@@ -1,224 +1,170 @@
-<script lang="ts">
+<script>
 
-  import Profile from '$lib/components/Profile.svelte';
-  import SubmitButton from '$lib/components/SubmitButton.svelte';
-  import Message from '$lib/components/Message.svelte';
   import { location } from '$lib/components/stores';
+  import { Card, Button ,MenuButton,CloseButton ,Modal, Spinner} from "flowbite-svelte";
+  import axios from "axios";
   import { onMount, afterUpdate  } from "svelte";
-  import { Button, Modal, P } from 'flowbite-svelte'
-  let messageContainer: HTMLElement | null = null;
 
-  let open = false;
-  let color;
-  let locationList = []
-  let messageList = []
+  let locationList=[]
+  let flagLoading = false;
+  let defaultModal = false;
+  let messE = ''
 
-  let inputText = ''
-
- 
-  $: {
-    if (messageList) {
-      scrollToBottom();
-      
-    }
-  }
-
- 
-  function scrollToBottom() {
-    if (messageContainer) {
-      messageContainer.scroll({
-        top: messageContainer.scrollHeight,
-        behavior: 'smooth'
-      });
-    }
-  }
-
-  async function readAllChunks(readableStream) {
-  const reader = readableStream.getReader();
-  const chunks = [];
   
-  let done, value;
-  while (!done) {
-    ({ value, done } = await reader.read());
-    if (done) {
-      return chunks;
-    }
-    chunks.push(value);
+  async function handleChatButton(loc_name) {
+    location.update(loc_name)
   }
-}
-  async function handleSubmit(sendmessage) {
 
-    inputText = ''
-    messageList=[...messageList, { content:sendmessage, role:'user' }];
-
+  async function handleDelete(loc_name_str) {
+    flagLoading=true
+    defaultModal=true
+    location.reset
     let formData = {
-      query : sendmessage,
-      loc_name : $location
+      loc_name : loc_name_str,
 
     };
+  
 
-    messageList=[...messageList, { content:'Thinking', role:'noti' }];
-    
-    try {
-   
-      const response2 = await fetch("https://chatbotbe.ap.ngrok.io/location/chat", {
-        method: "POST",
-        body: new URLSearchParams(formData).toString(),
-        headers: {
-          "Content-Type": 'application/x-www-form-urlencoded',
-        },
-        credentials: "same-origin",
+  try {
+      const response = await axios.post("https://chatbotbe.ap.ngrok.io/location/delete", new URLSearchParams(formData).toString(), {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        maxRedirects: 0, // Disable redirects
       });
-      const reader = response2.body.getReader();
-      messageList = messageList.filter((user) => user.role !== 'noti');
-      messageList=[...messageList, { content:'', role:'assistant' }];
+      flagLoading = false
+      messE=''
+      // console.log("Server Response:", response.data.data);
+  
+      locationList = locationList.filter((user) => user[0] !== loc_name_str);
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) {
-          break;
-        }
-        // console.log(new TextDecoder().decode(value))
-        messageList[messageList.length - 1].content += new TextDecoder().decode(value);
-      }
-   
+      // Handle the response data as needed
     } catch (error) {
-      
+      flagLoading = false
       console.error("Error uploading files:", error);
-      
+      messE='Error'
       // Handle the error
     }
 
     
     
   }
-
-
-
-
-
-  afterUpdate(() => {
-		if (messageList) {
-      scrollToBottom();
-      
-    }
-  });
   
   onMount(async () => {
-    if ($location==='')
-    {
-      try {
-            const response = await fetch("https://chatbotbe.ap.ngrok.io/location/get_alllocation")
-            const data = await response.json();
-            locationList = data.data;
-              if (locationList.length ===0)
-              {
-                color="red"
-                open = true
-              }
-              else
-              {
-                location.update(locationList[0][0])
-              }
-            }catch (error) {
-                  console.error('Error fetching data:', error);
-                }
-            }
-    
+    try {
+    const response = await fetch("https://chatbotbe.ap.ngrok.io/location/get_alllocation")
+    const data = await response.json();
+    locationList = data.data; 
+
+    }catch (error) {
+          console.error('Error fetching data:', error);
+        }
    
   });
+  // afterUpdate(async () => {
+  //   try {
+  //   const response = await fetch("https://chatbotbe.ap.ngrok.io/location/get_alllocation")
+  //   const data = await response.json();
+  //   locationList = data.data; 
 
-  
+  //   }catch (error) {
+  //         console.error('Error fetching data:', error);
+  //       }
+   
+
+  // })
 </script>
-<div class="text-6xl font-bold text-center pt-10 pb-10">
-  {$location}
-</div>
-<svelte:head>
-  <title>Aivision</title>
-</svelte:head>
 
-
-<Modal title="Warning" bind:open {color} >
-
-  <div class="text-base leading-relaxed">
-    No location data. Please upload location data first!
-  </div>
-  <svelte:fragment slot='footer'>
-    <Button href="/upload">I accept</Button>
-
-  </svelte:fragment>
-</Modal>
-<!-- 
-<Modal title="Warning Form" bind:open={defaultModal} color autoclose>
-  No location data. Please upload location data first!
-
-  <div class="text-base leading-relaxed">
+<Modal title="Status Form" bind:open={defaultModal} autoclose>
+  
+  {#if flagLoading}
+  <div class="flex items-center text-center justify-center w-full">
     
+    <br>
+    <p class="text-lg text-purple-700 font-bold">Deleting... &nbsp</p>
+    <Spinner color="purple" />
   </div>
- 
-</Modal> -->
+    {:else}
 
+    {#if messE.length==0}
 
+    <div class="flex items-center text-center justify-center w-full">
+      <br>
+      <p class="text-lg text-purple-700 font-bold">Done!</p>
 
-
-<div
-  class="flex-1 p-6 justify-between flex flex-col  border-2 border-white bg-slate-300 rounded-2xl h-full"
-  >
-  <Profile />
-
-  <div
-    bind:this={messageContainer}
-    class="max-h-[50vh] flex flex-col space-y-4 p-3 overflow-y-scroll scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch mt-auto"
-  >
-    {#each messageList as message}
-      <Message {message} />
-    {/each}
-  </div>
-
-  <div class="  px-4 pt-4 mb-2 sm:mb-0">
-    <div class="relative flex">
-      <form class="w-full relative" on:submit={()=>handleSubmit(inputText)}>
-        <textarea
-            on:keydown={(e) => {
-              const shiftEnter = e.shiftKey && e.key === 'Enter';
-
-              if (shiftEnter) {
-                e.stopPropagation();
-              } else if (e.key === 'Enter') {
-                e.preventDefault();
-            
-
-                if (e.target instanceof HTMLTextAreaElement) {
-                  e?.target?.form?.requestSubmit();
-                }
-              }
-            }}
-            bind:value={inputText}
-            name="message"
-            autocomplete="off"
-            placeholder="Write your message!"
-            class="w-full max-h-[200px] pr-32 resize-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-4 bg-gray-200 rounded-md py-3"
-          />
-                  <SubmitButton  disabled={inputText.length===0 ||$location===''}/>
-      </form>
     </div>
+
+    {:else}
+
+    <div class="flex items-center text-center justify-center w-full">
+      <br>
+      <p class="text-lg text-red-700 font-bold">{messE}</p>
+
+    </div>
+
+    {/if}
+
+
+    {/if}
+
+  <!-- <svelte:fragment slot='footer'>
+    <Button color="alternative" disabled = {flagLoading}>Decline</Button>
+  </svelte:fragment> -->
+</Modal>
+
+
+
+
+<div class="text-6xl font-bold text-center pt-10 pb-10 ">
+  Location
+</div>
+<!-- <Button on:click={()=>handleDelete('bku2')}></Button> -->
+
+<div class="grid grid-cols-2 gap-4 ">
+
+  {#each locationList as loc_name (loc_name)}
+  <div>
+    
+
+        
+    <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+      
+      <div class='relative'>
+        <div class="flex justify-end absolute  inset-x-0 z-100">
+          <CloseButton  on:click={()=>handleDelete(loc_name[0])}>
+            </CloseButton>
+          
+        </div>
+        <!-- <img class="rounded-t-lg object-fill" src={loc_name[1]} alt="" /> -->
+
+      </div>
+          
+
+      <div class="p-5">
+        
+              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{loc_name[0]}</h5>
+        
+          <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 custom-font-size">{loc_name[2]}</p>
+          <Button color="green" on:click={()=>handleChatButton(loc_name[0])}  href="/chat">
+              Chat
+              <svg class="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+              </svg>
+          </Button>
+      </div>
+    </div>
+  
   </div>
+{/each}
+
+
 </div>
 
-<style lang="postcss">
-  .scrollbar-w-2::-webkit-scrollbar {
-    @apply w-1 h-1;
+<style>
+  .custom-font-size {
+    font-size: 12px;
   }
+  /* img {
 
-  .scrollbar-track-blue-lighter::-webkit-scrollbar-track {
-    @apply bg-slate-200;
-  }
-
-  .scrollbar-thumb-blue::-webkit-scrollbar-thumb {
-    @apply bg-slate-400;
-  }
-
-  .scrollbar-thumb-rounded::-webkit-scrollbar-thumb {
-    @apply rounded;
-  }
+max-height: 200px;
+width: 100%;
+} */
 </style>

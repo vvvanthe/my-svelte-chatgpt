@@ -10,4 +10,15 @@ function createLocation() {
 	};
 }
 
+function createUser() {
+	const { subscribe, set, update } = writable('');
+
+	return {
+		subscribe,
+		update: (x:string) => update((n) => x),
+		reset: () => set('')
+	};
+}
+
 export const location = createLocation();
+export const username = createUser();
